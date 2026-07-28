@@ -28,18 +28,18 @@ Or skip the automatic hook entirely and just read things back one at a time with
 
 | Command | Arguments | Default | What it does |
 |---|---|---|---|
-| `/speak` | `mac` \| `llm` | `mac` | Reads your immediately preceding response aloud, once. |
-| `/toggle-speak-mode` | — | — | Flips `/speak`'s default mode (used when you call `/speak` with no argument) between `mac` and `llm`. |
-| `/toggle-speak` | — | off | Turns automatic speaking of every response on/off, via a Stop hook. Always `mac` mode — a hook can't cheaply call an LLM without adding latency to every turn. |
+| `/speak` | `local` \| `llm` | `local` | Reads your immediately preceding response aloud, once. |
+| `/toggle-speak-mode` | — | — | Flips `/speak`'s default mode (used when you call `/speak` with no argument) between `local` and `llm`. |
+| `/toggle-speak` | — | off | Turns automatic speaking of every response on/off, via a Stop hook. Always `local` mode — a hook can't cheaply call an LLM without adding latency to every turn. |
 | `/speak-rate` | `<wpm>` \| `slow` \| `normal` \| `fast` \| `reset` | engine default (~175–200 wpm) | Words-per-minute. No argument reports the current value. Same units on both backends. |
 | `/speak-voice` | `<name>` \| `list` \| `reset` | system default | Voice used for speech. No argument reports the current value; `list` shows what's installed. |
-| `/speak-limit` | `<bytes>` \| `reset` | `2000` | Truncation cap for the mechanical path (`/toggle-speak` and `/speak` mac mode). No effect on `/speak llm`. |
+| `/speak-limit` | `<bytes>` \| `reset` | `2000` | Truncation cap for the mechanical path (`/toggle-speak` and `/speak` local mode). No effect on `/speak llm`. |
 
 `/speak`'s two modes:
 
 | Mode | Speed | How | Best for |
 |---|---|---|---|
-| `mac` (default) | Instant | Reads the transcript directly, strips markdown, truncates at a sentence boundary if long. No LLM involved. | Everyday use, short-to-medium responses. |
+| `local` (default) | Instant | Reads the transcript directly, strips markdown, truncates at a sentence boundary if long. No LLM involved. | Everyday use, short-to-medium responses. |
 | `llm` | Costs a turn | Claude writes a concise spoken-friendly summary instead of reading verbatim. | Long or code-heavy responses that would otherwise get cut off or read awkwardly. |
 
 ## Accessibility
@@ -70,7 +70,7 @@ Requirements: `jq`, `perl`, `bash`, and the platform's TTS backend (`say` is pre
 
 ## How it works
 
-- `/speak` (mac mode) and the `/toggle-speak` Stop hook share one formatter (`scripts/speak-format.sh`): strip markdown noise, split code identifiers (`LC_ALL=C` → "LC ALL C", `toggleSpeakEnabled` → "toggle Speak Enabled") so the speech engine doesn't mangle them, and truncate at the last sentence boundary within the configured byte limit.
+- `/speak` (local mode) and the `/toggle-speak` Stop hook share one formatter (`scripts/speak-format.sh`): strip markdown noise, split code identifiers (`LC_ALL=C` → "LC ALL C", `toggleSpeakEnabled` → "toggle Speak Enabled") so the speech engine doesn't mangle them, and truncate at the last sentence boundary within the configured byte limit.
 - The Stop hook reads `last_assistant_message` directly from the hook's stdin JSON rather than the transcript file, since the transcript is written asynchronously and can lag. `/speak` has no such shortcut (it's a fresh command, not a hook), so it reads the transcript and waits for the file to go quiet before extracting text. Finding "the current transcript" and reading file size/mtime uses a small GNU/BSD `stat` compatibility shim (`scripts/speak-last-response.sh`), since those flags differ between Linux and macOS.
 - `scripts/tts-backend.sh` detects which speech engine is available (`say` on macOS, `espeak-ng`/`espeak` on Linux) and exposes backend-agnostic voice listing/validation. `scripts/speak-say.sh` is the single point that actually invokes it — applying rate/voice and launching it fully detached (own process group, not just a plain background job) so a hook's turn ending doesn't cut speech off mid-sentence.
 
@@ -91,7 +91,7 @@ All settings persist as plain files in `~/.claude/claude-speak/` — nothing to 
 | File | Set by | Holds | Missing means |
 |---|---|---|---|
 | `enabled` | `/toggle-speak` | presence = on | Automatic speaking off |
-| `mode` | `/toggle-speak-mode` | `mac` or `llm` | `/speak` defaults to `mac` |
+| `mode` | `/toggle-speak-mode` | `local` or `llm` | `/speak` defaults to `local` |
 | `rate` | `/speak-rate` | words per minute | Engine's own default rate |
 | `voice` | `/speak-voice` | backend-specific voice name/code | Engine's own default voice |
 | `limit` | `/speak-limit` | byte count | `2000` |
@@ -136,7 +136,7 @@ claude plugin install claude-speak@claude-speak
 
 ## Before publishing
 
-- Tag a release matching the `version` in both manifests (currently `1.0.0`) if you want others to pin to it.
+- Tag a release matching the `version` in both manifests (currently `1.1.0`) if you want others to pin to it.
 
 ## Author
 

@@ -10,4 +10,4 @@ Based on the argument passed to this command, do exactly one of the following vi
 - **`reset`**: clear back to the default: `rm -f ~/.claude/claude-speak/limit`.
 - **Anything else**: don't write anything — tell the user the argument wasn't understood (must be a positive integer or `reset`).
 
-This limit applies everywhere the mechanical formatter runs: the automatic `/toggle-speak` Stop hook and `/speak` (mac mode). It has no effect on `/speak llm`, whose length is controlled by the model's own summarization instead of this cap.
+This limit applies everywhere the mechanical formatter runs: the automatic `/toggle-speak` Stop hook and `/speak` (local mode). It has no effect on `/speak llm`, whose length is controlled by the model's own summarization instead of this cap.

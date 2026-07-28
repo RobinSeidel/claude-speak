@@ -10,4 +10,4 @@ Based on the argument passed to this command, do exactly one of the following vi
 - **`reset`**: clear back to the system default voice: `rm -f ~/.claude/claude-speak/voice`.
 - **Any other value**: treat it as a voice name. First verify it exists: `"${CLAUDE_PLUGIN_ROOT}/scripts/tts-backend.sh" validate-voice "<name>"`. If that fails, tell the user the voice name wasn't recognized and suggest running `/speak-voice list`. If it succeeds, write it: `mkdir -p ~/.claude/claude-speak && echo "<name>" > ~/.claude/claude-speak/voice`.
 
-This voice applies everywhere speech is used: the automatic `/toggle-speak` Stop hook, `/speak` (mac mode), and `/speak llm`. Voice names are backend-specific (macOS uses names like `Daniel`/`Samantha`, espeak-ng uses codes like `en-us`/`en-gb`) — a voice set on one machine's backend won't mean anything on another.
+This voice applies everywhere speech is used: the automatic `/toggle-speak` Stop hook, `/speak` (local mode), and `/speak llm`. Voice names are backend-specific (macOS uses names like `Daniel`/`Samantha`, espeak-ng uses codes like `en-us`/`en-gb`) — a voice set on one machine's backend won't mean anything on another.

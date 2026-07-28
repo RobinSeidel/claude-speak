@@ -13,4 +13,4 @@ Based on the argument passed to this command, do exactly one of the following vi
 - **`reset`**: clear back to the system default: `rm -f ~/.claude/claude-speak/rate`
 - **Anything else**: don't write anything — tell the user the argument wasn't understood and list the accepted forms above.
 
-This rate applies everywhere `say` is used: the automatic `/toggle-speak` Stop hook, `/speak` (mac mode), and `/speak llm`.
+This rate applies everywhere speech is used: the automatic `/toggle-speak` Stop hook, `/speak` (local mode), and `/speak llm`.
