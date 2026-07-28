@@ -1,0 +1,16 @@
+{
+  "description": "Speaks each response automatically via macOS `say` when toggle-speak is enabled (see /toggle-speak).",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/toggle-speak-stop.sh\"",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
