@@ -1,5 +1,8 @@
 # claude-speak
 
+[![Tests](https://github.com/JosephScript/claude-speak/actions/workflows/test.yml/badge.svg)](https://github.com/JosephScript/claude-speak/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Give Claude Code a voice. Hear responses read aloud on demand, or automatically after every turn — no API keys, no external services, just your OS's built-in speech engine.
 
 Works on **macOS** (`say`) and **Linux** (`espeak-ng`, or the older `espeak`). Windows isn't supported yet — see [Platform support](#platform-support).
