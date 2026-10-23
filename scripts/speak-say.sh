@@ -55,5 +55,7 @@ case "$backend" in
     exit 0
     ;;
 esac
+mkdir -p "$HOME/.claude/claude-speak"
+echo $! > "$HOME/.claude/claude-speak/pid"
 disown
 exit 0

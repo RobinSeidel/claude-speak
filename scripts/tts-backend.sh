@@ -63,9 +63,11 @@ voice_for_lang() {
   case "$(detect_backend)" in
     macos)
       # Skip macOS novelty voices (Albert, Zarvox, ...) when auto-picking.
-      say -v '?' | awk -v c="${code}_" '
-        BEGIN { split("Albert Bad Bahh Bells Boing Bubbles Cellos Good Jester Organ Superstar Trinoids Whisper Wobble Zarvox Fred Junior Kathy Ralph Princess Agnes", n, " "); for (i in n) skip[n[i]] = 1 }
-        index($2, c) == 1 && !($1 in skip) {print $1; exit}' ;;
+      # Voice names can contain spaces/parentheses ("Eddy (German (Germany))"),
+      # so split name and locale with a regex instead of by field.
+      say -v '?' | perl -ne '
+        BEGIN { %skip = map { $_ => 1 } qw(Albert Bad Bahh Bells Boing Bubbles Cellos Good Jester Organ Superstar Trinoids Whisper Wobble Zarvox Fred Junior Kathy Ralph Princess Agnes); }
+        if (/^(.+?)\s+'"$code"'_[A-Z]{2}\s+#/ && !$skip{(split " ", $1)[0]}) { print "$1\n"; exit }' ;;
     espeak) echo "$code" ;;
   esac
 }
