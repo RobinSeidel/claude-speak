@@ -147,3 +147,7 @@ claude plugin install claude-speak@claude-speak
 [JosephScript](https://github.com/JosephScript) — hi@josephscript.com
 
 Issues and PRs welcome.
+
+## Personal Voice
+
+`say` cannot use macOS Personal Voices. Set the voice to `personal:<name>` (e.g. `echo 'personal:Ben' > ~/.claude/claude-speak/voice.en`) and `scripts/speak-pv.sh` speaks with it via `AVSpeechSynthesizer`. It compiles `scripts/speak-pv.swift` into `~/.claude/claude-speak/bin/` on first use (needs `swiftc`), and Personal Voice access must be allowed for apps in System Settings → Accessibility → Personal Voice.

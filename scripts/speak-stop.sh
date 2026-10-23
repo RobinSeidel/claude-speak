@@ -6,7 +6,7 @@ PID_FILE="$HOME/.claude/claude-speak/pid"
 [ -s "$PID_FILE" ] || exit 0
 pid="$(cat "$PID_FILE")"
 case "$(ps -p "$pid" -o comm= 2>/dev/null)" in
-  *say|*espeak|*espeak-ng) kill "$pid" 2>/dev/null ;;
+  *say|*speak-pv|*espeak|*espeak-ng) kill "$pid" 2>/dev/null ;;
 esac
 rm -f "$PID_FILE"
 exit 0

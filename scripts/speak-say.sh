@@ -4,7 +4,8 @@
 # per minute) from ~/.claude/claude-speak/rate and voice from
 # ~/.claude/claude-speak/voice if set — see /speak-rate and /speak-voice.
 # With no explicit voice set (or voice "auto"), the voice follows the detected
-# language of the text (detect-lang.sh). Shared by speak-format.sh (mechanical path) and /speak's llm mode, so both
+# language of the text (detect-lang.sh). A voice written "personal:<name>" is a
+# macOS Personal Voice, spoken through speak-pv.sh instead of `say`. Shared by speak-format.sh (mechanical path) and /speak's llm mode, so both
 # stay consistent across backends.
 #
 # The backend is launched fully detached (own process group via `set -m`,
@@ -40,8 +41,14 @@ case "$backend" in
   macos)
     args=()
     [ -n "$rate" ] && args+=(-r "$rate")
-    [ -n "$voice" ] && args+=(-v "$voice")
-    say "${args[@]}" "$text" >/dev/null 2>&1 &
+    if [[ "$voice" == personal:* ]]; then
+      # Personal Voices are invisible to `say`; speak-pv.sh uses AVSpeechSynthesizer.
+      args+=(-v "${voice#personal:}")
+      printf '%s' "$text" | "$DIR/speak-pv.sh" "${args[@]}" >/dev/null 2>&1 &
+    else
+      [ -n "$voice" ] && args+=(-v "$voice")
+      say "${args[@]}" "$text" >/dev/null 2>&1 &
+    fi
     ;;
   espeak)
     espeak_bin=$(command -v espeak-ng || command -v espeak)
