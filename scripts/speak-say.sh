@@ -34,6 +34,9 @@ backend="$("$DIR/tts-backend.sh" detect)"
 if [ -z "$voice" ] || [ "$voice" = "auto" ]; then
   lang="$(printf '%s' "$text" | "$DIR/detect-lang.sh")"
   voice="$("$DIR/tts-backend.sh" voice-for-lang "$lang")"
+  # "system": pass no -v, so `say` uses the system voice (the only way to get
+  # Siri voices, which `say -v` cannot select).
+  [ "$voice" = "system" ] && voice=""
 fi
 
 set -m

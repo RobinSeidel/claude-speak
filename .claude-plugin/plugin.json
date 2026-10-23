@@ -1,7 +1,7 @@
 {
   "name": "claude-speak",
   "description": "Give Claude a voice on macOS (`say`) or Linux (`espeak-ng`) — on-demand /speak (verbatim or LLM-summarized), an automatic toggle-speak Stop hook, and adjustable rate/voice/truncation.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": {
     "name": "JosephScript",
     "email": "hi@josephscript.com"
