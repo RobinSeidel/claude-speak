@@ -27,9 +27,13 @@ guard let voiceName else { fail("missing -v <voice name>") }
 let text = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
 guard !text.isEmpty else { exit(0) }
 
-let auth = DispatchSemaphore(value: 0)
-AVSpeechSynthesizer.requestPersonalVoiceAuthorization { _ in auth.signal() }
-_ = auth.wait(timeout: .now() + 30)
+// The authorization callback never fires in a command-line tool, so only ask
+// (and wait) when access has not been decided yet; otherwise start speaking now.
+if AVSpeechSynthesizer.personalVoiceAuthorizationStatus == .notDetermined {
+    let auth = DispatchSemaphore(value: 0)
+    AVSpeechSynthesizer.requestPersonalVoiceAuthorization { _ in auth.signal() }
+    _ = auth.wait(timeout: .now() + 30)
+}
 
 guard let voice = AVSpeechSynthesisVoice.speechVoices().first(where: {
     $0.voiceTraits.contains(.isPersonalVoice) && $0.name == voiceName
