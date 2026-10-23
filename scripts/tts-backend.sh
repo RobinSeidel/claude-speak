@@ -52,12 +52,31 @@ validate_voice() {
   esac
 }
 
+# Picks a voice for an ISO 639-1 language code. A per-language override in
+# ~/.claude/claude-speak/voice.<code> wins; otherwise macOS uses the first
+# installed voice whose locale starts with <code>_, espeak uses the code
+# itself as the voice name. Prints nothing if no voice is found.
+voice_for_lang() {
+  code="$1"
+  override="$HOME/.claude/claude-speak/voice.$code"
+  [ -s "$override" ] && { cat "$override"; return 0; }
+  case "$(detect_backend)" in
+    macos)
+      # Skip macOS novelty voices (Albert, Zarvox, ...) when auto-picking.
+      say -v '?' | awk -v c="${code}_" '
+        BEGIN { split("Albert Bad Bahh Bells Boing Bubbles Cellos Good Jester Organ Superstar Trinoids Whisper Wobble Zarvox Fred Junior Kathy Ralph Princess Agnes", n, " "); for (i in n) skip[n[i]] = 1 }
+        index($2, c) == 1 && !($1 in skip) {print $1; exit}' ;;
+    espeak) echo "$code" ;;
+  esac
+}
+
 case "$1" in
   detect) detect_backend ;;
+  voice-for-lang) voice_for_lang "$2" ;;
   list-voices) list_voices ;;
   validate-voice) validate_voice "$2" ;;
   *)
-    echo "usage: $(basename "$0") {detect|list-voices|validate-voice <name>}" >&2
+    echo "usage: $(basename "$0") {detect|list-voices|validate-voice <name>|voice-for-lang <code>}" >&2
     exit 2
     ;;
 esac

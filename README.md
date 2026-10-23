@@ -32,7 +32,7 @@ Or skip the automatic hook entirely and just read things back one at a time with
 | `/toggle-speak-mode` | — | — | Flips `/speak`'s default mode (used when you call `/speak` with no argument) between `local` and `llm`. |
 | `/toggle-speak` | — | off | Turns automatic speaking of every response on/off, via a Stop hook. Always `local` mode — a hook can't cheaply call an LLM without adding latency to every turn. |
 | `/speak-rate` | `<wpm>` \| `slow` \| `normal` \| `fast` \| `reset` | engine default (~175–200 wpm) | Words-per-minute. No argument reports the current value. Same units on both backends. |
-| `/speak-voice` | `<name>` \| `list` \| `reset` | system default | Voice used for speech. No argument reports the current value; `list` shows what's installed. |
+| `/speak-voice` | `<name>` \| `auto` \| `list` \| `reset` | `auto` (voice follows the text's language) | Voice used for speech. No argument reports the current value; `list` shows what's installed. |
 | `/speak-limit` | `<bytes>` \| `reset` | `2000` | Truncation cap for the mechanical path (`/toggle-speak` and `/speak` local mode). No effect on `/speak llm`. |
 
 `/speak`'s two modes:
@@ -41,6 +41,10 @@ Or skip the automatic hook entirely and just read things back one at a time with
 |---|---|---|---|
 | `local` (default) | Instant | Reads the transcript directly, strips markdown, truncates at a sentence boundary if long. No LLM involved. | Everyday use, short-to-medium responses. |
 | `llm` | Costs a turn | Claude writes a concise spoken-friendly summary instead of reading verbatim. | Long or code-heavy responses that would otherwise get cut off or read awkwardly. |
+
+## Automatic language detection
+
+Without an explicit voice (or with `/speak-voice auto`), `scripts/detect-lang.sh` guesses the language of the text (en, de, fr, es, it, pt, nl; stopword-based, no dependencies) and picks a matching installed voice. Pin a voice per language by writing its name to `~/.claude/claude-speak/voice.<code>`, e.g. `voice.de`. Mixed-language or very short text falls back to English.
 
 ## Accessibility
 

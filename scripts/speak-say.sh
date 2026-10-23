@@ -3,7 +3,8 @@
 # espeak on Linux — see tts-backend.sh), applying the persisted rate (words
 # per minute) from ~/.claude/claude-speak/rate and voice from
 # ~/.claude/claude-speak/voice if set — see /speak-rate and /speak-voice.
-# Shared by speak-format.sh (mechanical path) and /speak's llm mode, so both
+# With no explicit voice set (or voice "auto"), the voice follows the detected
+# language of the text (detect-lang.sh). Shared by speak-format.sh (mechanical path) and /speak's llm mode, so both
 # stay consistent across backends.
 #
 # The backend is launched fully detached (own process group via `set -m`,
@@ -27,6 +28,12 @@ voice=""
 [ -s "$VOICE_FILE" ] && voice="$(cat "$VOICE_FILE")"
 
 backend="$("$DIR/tts-backend.sh" detect)"
+
+# No explicit voice (or "auto"): pick one matching the text's language.
+if [ -z "$voice" ] || [ "$voice" = "auto" ]; then
+  lang="$(printf '%s' "$text" | "$DIR/detect-lang.sh")"
+  voice="$("$DIR/tts-backend.sh" voice-for-lang "$lang")"
+fi
 
 set -m
 case "$backend" in
