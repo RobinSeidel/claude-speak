@@ -154,4 +154,4 @@ Issues and PRs welcome.
 
 ## Siri voices
 
-`say -v` cannot select Siri voices, but `say` without `-v` uses the system voice, which can be a Siri voice (System Settings → Accessibility → Spoken Content → System Voice). Set a per-language voice to `system` to use it, e.g. `echo system > ~/.claude/claude-speak/voice.de`.
+`say -v` cannot select Siri voices, but `say` without `-v` uses the system voice, which can be a Siri voice (System Settings → Accessibility → Spoken Content → System Voice). Set a per-language voice to `system` to use it, e.g. `echo system > ~/.claude/claude-speak/voice.de`. macOS keeps one system voice per language, so the plugin sets `SystemTTSLanguage` to the detected language before speaking; pick a Siri voice for each language in the System Voice settings.

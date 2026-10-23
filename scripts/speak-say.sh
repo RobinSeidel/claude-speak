@@ -35,8 +35,12 @@ if [ -z "$voice" ] || [ "$voice" = "auto" ]; then
   lang="$(printf '%s' "$text" | "$DIR/detect-lang.sh")"
   voice="$("$DIR/tts-backend.sh" voice-for-lang "$lang")"
   # "system": pass no -v, so `say` uses the system voice (the only way to get
-  # Siri voices, which `say -v` cannot select).
-  [ "$voice" = "system" ] && voice=""
+  # Siri voices, which `say -v` cannot select). macOS remembers one system
+  # voice per language, so select the detected language first.
+  if [ "$voice" = "system" ]; then
+    [ "$backend" = "macos" ] && defaults write com.apple.speech.voice.prefs SystemTTSLanguage -string "$lang"
+    voice=""
+  fi
 fi
 
 set -m
